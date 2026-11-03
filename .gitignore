@@ -1,0 +1,20 @@
+# Python
+fastapienv/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Node / React
+node_modules/
+frontend/build/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

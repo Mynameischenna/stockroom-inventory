@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from config import CORS_ORIGINS
-from database import get_db
+from database import Base, engine, get_db
 from models import ProductDB
 from schemas import Product, ProductCreate
 
@@ -12,13 +11,13 @@ app = FastAPI(title="Stockroom Inventory API")  # need to have fastapi obj so th
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS,  # only the frontends listed in CORS_ORIGINS
+    allow_origins=["*"],  # allow all origins
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # allow all methods
+    allow_headers=["*"],  # allow all headers
 )
 
-# tables are created/changed by Alembic migrations: run `alembic upgrade head`
+Base.metadata.create_all(bind=engine)  # creates tables that don't exist yet
 
 
 def get_product_or_404(product_id: int, db: Session) -> ProductDB:
@@ -31,11 +30,6 @@ def get_product_or_404(product_id: int, db: Session) -> ProductDB:
 @app.get("/")
 def greet():
     return "Hello, World!"
-
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
 
 
 @app.get("/products", response_model=list[Product])
